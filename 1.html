@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>1st task</title>
+	<p>Задание: Дано число N, необходимо посчитать количество нулей на конце числа, являющегося результатом вычисления факториала N!</p>
+
+	<script>
+		function ShowAnswer(){
+			var integer = parseInt(document.getElementById('integerField').value, 10)
+			if(integer > 0){
+				var factorial = CalculateFactorial(integer)
+				var answer = CountZeros(factorial)
+				var answerDiv = document.getElementById('answerDiv')
+				answerDiv.innerHTML = 'number of zeros at the "end" of the factorial: ' + answer
+			} else {
+				alert("Input only positive integers, pls")
+			}			
+		}
+
+		function CalculateFactorial(integer){
+			var result = 1
+			for (var i = 0; i < integer; ++i){
+				var step = integer - i
+				result *= step
+			}
+			return result
+		}
+
+		function CountZeros(integer){
+			var result = 0
+			var divisor = 10
+			var remainder = integer % divisor
+			while(remainder == 0){
+				++result
+				divisor *= 10
+				remainder = integer % divisor
+			}
+			return result
+		}
+	</script>
+	
+</head>
+<body>
+	<label for="integerField" style="font-weight: bold;">Input any positive integer:</label>
+	<input type="text" id="integerField" name="integerField"/>
+	<button onclick="ShowAnswer()">OK</button>
+	<div id='answerDiv'></div>
+</body>
+</html>

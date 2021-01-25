@@ -1,0 +1,7 @@
+Задание: Используя документацию к oData https://www.odata.org/documentation/odata-version-2-0/, составьте запрос к сервису https://services.odata.org/V2/Northwind/Northwind.svc/, который возвратит все записи коллекции Products стоимостью (UnitPrice) большей или равной 50.
+
+
+Ответ: https://services.odata.org/V2/Northwind/Northwind.svc/Products?$format=json&$filter=UnitPrice ge 50
+
+В теории можно было добавить еще и $skip параметр на случай если если колво записей было бы велико
+(но их всего из 7, так что и такой url сойдёт, тем более что в задании требуется не приложение с pagination, а всего лишь url)

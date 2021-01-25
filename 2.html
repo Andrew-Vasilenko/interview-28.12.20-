@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>2nd task</title>
+	<p>Задание: Написать программу, которая на основании запроса к погодному сервису https://openweathermap.org/ <br> выведет 
+		среднюю ощущаемую вечернюю (eve) температуру в градусах Цельсия 
+		и минимальное давление за предстоящие 5 дней (включая сегодняшний).<br>
+Подобный запрос потребует регистрации на данном ресурсе с использованием бесплатного плана (Free)</p>
+
+	<script>
+		function WeatherGetRequest(){
+			document.getElementById("responseDiv").innerHTML = "<br>"
+
+			var apikey = "4bab5ab1358bcdb80b713199a4befaeb"
+			var cityCoordinates = JSON.parse(document.getElementById("selectCity").value)
+			var requestUrl = "https://api.openweathermap.org/data/2.5/onecall?units=metric&lat="+ cityCoordinates.lat +"&lon="+ cityCoordinates.lon +
+			"&exclude=hourly,minutely&appid="+ apikey
+
+			var xhttp = new XMLHttpRequest()
+			xhttp.onreadystatechange = function(){
+				if (this.readyState == 4 && this.status == 200){
+					var responseBodyJSON = JSON.parse(xhttp.responseText)					
+					var dailyWeatherArray = responseBodyJSON.daily
+					var eveTempSum = 0 // the sum of evening temperatures (5 days)
+					var minimalPressure = dailyWeatherArray[0].pressure // the INITIAL minimal pressure (in 5 days)
+
+					for (var i = 0; i < 5; ++i){
+
+						// dates
+						var date = new Date(dailyWeatherArray[i].dt * 1000)
+						var day = date.getDate()
+						var month = date.getMonth()
+						var year = date.getFullYear()
+						var formattedDate = day+ "." +month+ "." +year
+
+						// evening "feels-like" temperature
+						var feels_like_eve = dailyWeatherArray[i].feels_like.eve
+						eveTempSum += feels_like_eve
+						document.getElementById("responseDiv").innerHTML += "Date: "+ formattedDate+ ', Evening "feels-like" temperature: ' +feels_like_eve+ ", "
+
+						// pressures and minimal pressure
+						var pressure = dailyWeatherArray[i].pressure
+						document.getElementById("responseDiv").innerHTML += "pressure: "+ pressure +"<br>"
+						if(pressure < minimalPressure)
+							minimalPressure = pressure
+					}
+
+					averageEveTemp = eveTempSum / 5
+					document.getElementById("responseDiv").innerHTML += "<br>Average feels-like evening temp: "+ averageEveTemp +"<br>"
+					document.getElementById("responseDiv").innerHTML += "<br>The minimal pressure: "+ minimalPressure
+				}
+			}
+			xhttp.open("GET", requestUrl, true);
+			xhttp.send();
+		}
+	</script>
+	
+</head>
+<body>
+
+	<label for="cityID">Choose a city:</label>
+
+	<select name="cityCoordinates" id="selectCity">
+		<option value='{"lon":142.816666,"lat":63.466671}'>Oymyakon</option>
+		<option value='{"lon":38.976944,"lat":45.03278}'>Krasnodar</option>
+		<option value='{"lon":37.606667,"lat":55.761665}'>Moscow</option>
+	</select>
+
+	<button onclick="WeatherGetRequest()">Get Weather</button>
+	<div id='responseDiv'><br></div>
+</body>
+</html>
